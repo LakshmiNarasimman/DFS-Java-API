@@ -144,7 +144,27 @@ public class HDFSClient {
 		System.out.println("No such destination " + dstPath);
 		return;
 		}
+		String filename = source.substring(source.lastIndexOf('/') + 1, source.length());
+		 
+		try{
+			if(fileSystem.exists(dstPath))
+			{
+				System.out.println(dstPath +" : File exists");
+			}
+			else
+			{
+				fileSystem.copyFromLocalFile(srcPath, dstPath);
+				System.out.println("File " + filename + "copied to " + dest);
+			}
+		
+		}catch(Exception e){
+		System.err.println("Exception caught! :" + e);
+		System.exit(1);
+		}finally{
+		fileSystem.close();
 		}
+		}
+		
 		public void moveFromLocal (String source, String dest) throws IOException {
 			 
 			
@@ -193,42 +213,24 @@ public class HDFSClient {
 			System.out.println("No such destination " + dstPath);
 			return;
 			}
-			 
-			// Get the filename out of the file path
 			String filename = source.substring(source.lastIndexOf('/') + 1, source.length());
 			 
 			try{
-			fileSystem.copyFromLocalFile(srcPath, dstPath);
-			System.out.println("File " + filename + "copied to " + dest);
+				if(fileSystem.exists(dstPath))
+				{
+					System.out.println(dstPath +" : File exists");
+				}
+				else
+				{
+					fileSystem.copyFromLocalFile(srcPath, dstPath);
+					System.out.println("File " + filename + "copied to " + dest);
+				}
+			
 			}catch(Exception e){
 			System.err.println("Exception caught! :" + e);
 			System.exit(1);
 			}finally{
 			fileSystem.close();
-			}
-			}
-		public void appendToFiles(String source, String dest) throws IOException
-		{
-			FileSystem fileSystem = FileSystem.get(config);
-			Path srcPath = new Path(source);
-			 
-			Path dstPath = new Path(dest);
-			// Check if the file already exists
-			if (!(fileSystem.exists(dstPath))) {
-			System.out.println("No such destination " + dstPath);
-			return;
-			}
-			String filename = source.substring(source.lastIndexOf('/') + 1, source.length());
-			try{
-				//fileSystem.append(srcPath,dstPath);
-				//FSDataOutputStream os=new FSDataOutputStream(new OutputStream(srcPath));
-				
-				
-			}catch(Exception e){
-				System.err.println("Exception caught! :" + e);
-				System.exit(1);
-			}finally{
-				fileSystem.close();
 			}
 			
 		}
@@ -293,10 +295,19 @@ public class HDFSClient {
 		 
 		// Get the filename out of the file path
 		String filename = source.substring(source.lastIndexOf('/') + 1, source.length());
-		 
+		//String desti=dstPath.toString()+"/"+filename;
+		//System.out.println(desti);
+		// Path newPath=new Path(filename);
 		try{
+			if(ifExists(dstPath))
+			{
+				System.out.println(filename+" File already exists in the path "+dstPath);
+			}
+			else
+			{
 		fileSystem.copyToLocalFile(srcPath, dstPath);
-		System.out.println("File " + filename + "copied to " + dest);
+		System.out.println("File " + filename + " copied to " + dest);
+			}
 		}catch(Exception e){
 		System.err.println("Exception caught! :" + e);
 		System.exit(1);
@@ -1125,8 +1136,8 @@ public class HDFSClient {
 //		client.changeUserGroup(user, group, source);
 //		client.checkSum(loc);
 //		client.copy(source, dest);
-//		client.copyFromLocal(source, dest);
-//		client.copyToLocal(source, dest);
+//		client.copyFromLocal("/home/noahdata/Narasimman/wc", "tet");
+		client.copyToLocal("test/wc", "/home/noahdata/Narasimman/HiveRunner");
 //		client.createSnapshot(source, snsName);
 //		client.deleteFile(file);
 //		client.deleteSnapshot(source);
